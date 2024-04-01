@@ -1,18 +1,35 @@
 package com.fjr619.pizzaslidecompose.presenter
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fjr619.pizzaslidecompose.presenter.components.Pizza
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaTopBar
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-
+    val pagerState = rememberPagerState(
+        initialPage = 0,
+        initialPageOffsetFraction = 0f
+    ) {
+        state.pizzaList.size
+    }
     Scaffold(
         topBar = {
             PizzaTopBar(isFavorite = state.isFavorite) {
@@ -21,16 +38,29 @@ fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
         }
     ) { paddingValues ->
         PizzaContent(
-            state,
-            paddingValues
+            state = state,
+            pagerState = pagerState,
+            paddingValues = paddingValues
         )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun PizzaContent(
+    modifier: Modifier = Modifier,
     state: PizzaUiState,
+    pagerState: PagerState,
     paddingValues: PaddingValues
 ) {
-
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Pizza(
+            pagerState = pagerState,
+            pizzaList = state.pizzaList, pizzaSize = state.selectedSize)
+    }
 }
