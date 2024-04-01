@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -18,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.fjr619.pizzaslidecompose.presenter.components.Pizza
+import com.fjr619.pizzaslidecompose.presenter.components.PizzaSizeSelection
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaTopBar
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,7 +43,8 @@ fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
         PizzaContent(
             state = state,
             pagerState = pagerState,
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            onPizzaSizeClicked = viewModel::onPizzaSizeClicked
         )
     }
 }
@@ -51,7 +55,8 @@ private fun PizzaContent(
     modifier: Modifier = Modifier,
     state: PizzaUiState,
     pagerState: PagerState,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    onPizzaSizeClicked: (PizzaSize) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -62,5 +67,16 @@ private fun PizzaContent(
         Pizza(
             pagerState = pagerState,
             pizzaList = state.pizzaList, pizzaSize = state.selectedSize)
+
+        PizzaPrice(price = state.totalPrice)
+        PizzaSizeSelection(selectedSize = state.selectedSize, onClick = onPizzaSizeClicked)
     }
+}
+
+@Composable
+private fun PizzaPrice(price: Double) {
+    Text(
+        text = "$$price",
+        style = MaterialTheme.typography.headlineMedium,
+    )
 }
