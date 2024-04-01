@@ -6,7 +6,8 @@ import com.fjr619.pizzaslidecompose.domain.Pizza
 data class PizzaUiState(
     val pizzaList: List<Pizza> = emptyList(),
     val selectedSize: PizzaSize = PizzaSize.MEDIUM,
-    val totalPrice: Double = 10.0,
+    val basePrice: Double = PizzaSize.MEDIUM.price,
+    val toppingPrice: Double = 0.0,
     val isFavorite: Boolean = false,
     val selectedPizza: Pizza = DataSource.pizzaList.first(),
 )

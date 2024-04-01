@@ -25,7 +25,7 @@ class PizzaViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
             _state.update {
                 it.copy(
-                    pizzaList = DataSource.pizzaList
+                    pizzaList = DataSource.pizzaList.toMutableList()
                 )
             }
         }
@@ -36,37 +36,78 @@ class PizzaViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onPizzaSizeClicked(size: PizzaSize) {
-        _state.update { it.copy(selectedSize = size) }
+        _state.update {
+            it.copy(
+                selectedSize = size,
+                basePrice = size.price
+            )
+        }
     }
 
     fun setSelectedPizza(page: Int) {
-        _state.update { it.copy(selectedPizza = state.value.pizzaList[page]) }
+        _state.update { state ->
+            val newSelectedPizza = state.pizzaList[page]
+            var newToppingPrice = 0.0
+            newSelectedPizza.ingredients.filter {
+                it.selected
+            }.forEach {
+                newToppingPrice += it.price
+            }
+
+            state.copy(selectedPizza = newSelectedPizza, toppingPrice = newToppingPrice)
+        }
     }
 
     fun onIngredientClicked(ingredient: Ingredient) {
-        val updateSelectedPizza = state.value.selectedPizza.copy(
-            ingredients = state.value.selectedPizza.ingredients.map { item ->
-                if (item.id == ingredient.id) item.copy(selected = !item.selected) else item
-            }
-        )
 
+//
+//
 
         _state.update { state ->
+            var newToppingPrice = state.toppingPrice
+            val updateSelectedPizza = state.selectedPizza.copy(
+                ingredients = state.selectedPizza.ingredients.map { item ->
+                    if (item.id == ingredient.id) {
+                        val newSelected = !item.selected
+                        newToppingPrice = if (newSelected) {
+                            newToppingPrice + ingredient.price
+                            } else {
+                            newToppingPrice - ingredient.price
+                            }
+                        item.copy(selected = newSelected)
+                    } else item
+                }
+            )
+
             val updateIndex = state.pizzaList.indexOfFirst { pizza ->
                 pizza.id == updateSelectedPizza.id
             }
 
-            state.pizzaList.toMutableList()[updateIndex] = updateSelectedPizza
+            val list = state.pizzaList.toMutableList()
+            list[updateIndex] = updateSelectedPizza
 
             state.copy(
-                pizzaList = state.pizzaList,
+                pizzaList = list,
+                toppingPrice = newToppingPrice,
                 selectedPizza = updateSelectedPizza
             )
+
+
 //            val updatedPizzaList = state.pizzaList.map { pizza ->
 //                if (pizza.id == state.selectedPizza.id) {
 //                    pizza.copy(
 //                        ingredients = pizza.ingredients.map { item ->
-//                            if (item.id == ingredient.id) item.copy(selected = !item.selected) else item
+//                            if (item.id == ingredient.id) {
+//                                val newSelected = !item.selected
+//
+//                                val newToppingPrice = if (newSelected) {
+//                                    state.toppingPrice + ingredient.price
+//                                } else {
+//                                    state.toppingPrice - ingredient.price
+//                                }
+//
+//                                item.copy(selected = newSelected)
+//                            }  else item
 //                        }
 //                    )
 //                } else pizza
@@ -75,6 +116,7 @@ class PizzaViewModel @Inject constructor() : ViewModel() {
 //                pizzaList = updatedPizzaList,
 //                selectedPizza = updatedPizzaList.first { it.id == state.selectedPizza.id }
 //            )
+
         }
     }
 }

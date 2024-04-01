@@ -53,10 +53,11 @@ fun PizzaPager(
             contentAlignment = Alignment.Center
         ) {
             Image(
+                modifier = Modifier.size(300.dp),
                 painter = painterResource(id = pizzaList[page].breadRes),
                 contentDescription = null,
             )
-            pizzaList[page].ingredients.filter { 
+            pizzaList[page].ingredients.filter {
                 it.selected
             }.forEach { ingredient ->
                 when (ingredient.id) {

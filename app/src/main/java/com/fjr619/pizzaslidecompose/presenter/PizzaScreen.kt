@@ -1,9 +1,9 @@
 package com.fjr619.pizzaslidecompose.presenter
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
@@ -12,14 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fjr619.pizzaslidecompose.domain.Ingredient
 import com.fjr619.pizzaslidecompose.presenter.components.Pizza
+import com.fjr619.pizzaslidecompose.presenter.components.PizzaIngredients
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaSizeSelection
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaTopBar
 
@@ -33,6 +33,9 @@ fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
     ) {
         state.pizzaList.size
     }
+
+    viewModel.setSelectedPizza(pagerState.settledPage)
+
     Scaffold(
         topBar = {
             PizzaTopBar(isFavorite = state.isFavorite) {
@@ -44,7 +47,8 @@ fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
             state = state,
             pagerState = pagerState,
             paddingValues = paddingValues,
-            onPizzaSizeClicked = viewModel::onPizzaSizeClicked
+            onPizzaSizeClicked = viewModel::onPizzaSizeClicked,
+            onIngredientClicked = viewModel::onIngredientClicked
         )
     }
 }
@@ -57,6 +61,7 @@ private fun PizzaContent(
     pagerState: PagerState,
     paddingValues: PaddingValues,
     onPizzaSizeClicked: (PizzaSize) -> Unit,
+    onIngredientClicked: (Ingredient) -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -68,8 +73,13 @@ private fun PizzaContent(
             pagerState = pagerState,
             pizzaList = state.pizzaList, pizzaSize = state.selectedSize)
 
-        PizzaPrice(price = state.totalPrice)
+        PizzaPrice(price = state.basePrice + state.toppingPrice)
         PizzaSizeSelection(selectedSize = state.selectedSize, onClick = onPizzaSizeClicked)
+        Spacer(modifier = Modifier.weight(1f))
+        PizzaIngredients(
+            pizza = state.selectedPizza,
+            onIngredientClicked = onIngredientClicked,
+        )
     }
 }
 
