@@ -14,7 +14,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -27,6 +29,7 @@ import com.fjr619.pizzaslidecompose.presenter.components.PizzaIngredients
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaSizeSelection
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaTopBar
 import com.fjr619.pizzaslidecompose.presenter.components.RoundedButton
+import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -39,7 +42,12 @@ fun PizzaScreen(viewModel: PizzaViewModel = hiltViewModel()) {
         state.pizzaList.size
     }
 
-    viewModel.setSelectedPizza(pagerState.settledPage)
+    LaunchedEffect(key1 = pagerState) {
+        snapshotFlow { pagerState.settledPage }
+            .collect {
+                viewModel.setSelectedPizza(pagerState.settledPage)
+            }
+    }
 
     Scaffold(
         topBar = {
