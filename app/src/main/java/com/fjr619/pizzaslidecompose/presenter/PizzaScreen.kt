@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -15,13 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.fjr619.pizzaslidecompose.R
 import com.fjr619.pizzaslidecompose.domain.Ingredient
 import com.fjr619.pizzaslidecompose.presenter.components.Pizza
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaIngredients
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaSizeSelection
 import com.fjr619.pizzaslidecompose.presenter.components.PizzaTopBar
+import com.fjr619.pizzaslidecompose.presenter.components.RoundedButton
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -80,6 +85,11 @@ private fun PizzaContent(
             pizza = state.selectedPizza,
             onIngredientClicked = onIngredientClicked,
         )
+        RoundedButton(
+            label = stringResource(R.string.add_to_cart),
+            icon = Icons.Filled.ShoppingCart,
+            onClick = { })
+        Spacer(modifier = Modifier.weight(1f))
     }
 }
 

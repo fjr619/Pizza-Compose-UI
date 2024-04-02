@@ -28,7 +28,7 @@ fun PizzaTopBar(
             )
         },
         navigationIcon = {
-            IconButton(onClick = onFavoriteClicked) {
+            IconButton(onClick = { TODO() }) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(R.string.back)
