@@ -28,7 +28,7 @@ fun PizzaToppings(
         modifier = modifier.fillMaxSize().scale(scale = scale.value)
     ) {
         images.forEach { image ->
-            val randomOffsetX = remember { mutableStateOf(Random.nextInt(90, 275)) }
+            val randomOffsetX = remember { mutableStateOf(Random.nextInt(30, 230)) }
             val randomOffsetY = remember { mutableStateOf(Random.nextInt(30, 230)) }
 
             ToppingItem(
